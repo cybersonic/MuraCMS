@@ -245,6 +245,11 @@ select * from tplugins order by #arguments.orderby#
 <cfset var cffileData=structNew()>
 <cfset var isPostedFile=false>
 <cfset var settingBean="">
+
+<cfparam name="form.newPluginUrl" default="">
+
+
+
 <cflock name="addPlugin#application.instanceID#" timeout="200">
 	<!--- <cftry> --->
 	
@@ -252,7 +257,26 @@ select * from tplugins order by #arguments.orderby#
 		<cfset modID=getPlugin(id,'',false).moduleID>
 	</cfif>
 	
-	<cfif not len(arguments.pluginFile) and isDefined("form.NewPlugin") and getBean("fileManager").isPostedFile(form.NewPlugin)>
+	
+	<!--- check to see if you want me to download something --->
+
+	<cfif not len(arguments.pluginFile) and Len(form.newPluginUrl) and isValid("url", form.newPluginUrl)>
+	
+		<cfset var pluginFileName = CreateUUID() & ".zip">
+
+		<!--- try to download this... it should be a binary file --->
+		<cfhttp url="#form.newPluginUrl#" method="get" getasbinary="yes" result="myResult">
+			
+		</cfhttp>
+			
+			<cfset pluginFileLocation = variables.configBean.getTempDir() & pluginFileName>
+
+			<cfset fileWrite(pluginFileLocation, myResult.filecontent)>
+
+			<cfset serverfile = pluginFileLocation>
+
+	<cfelseif not len(arguments.pluginFile) and isDefined("form.NewPlugin") and getBean("fileManager").isPostedFile(form.NewPlugin)>
+
 		<cffile action="upload" result="cffileData" filefield="NewPlugin" nameconflict="makeunique" destination="#variables.configBean.getTempDir()#" >	
 		<cfset serverFile="#variables.configBean.getTempDir()##delim##cffileData.serverFile#">
 	<cfelseif len(arguments.pluginFile)>
