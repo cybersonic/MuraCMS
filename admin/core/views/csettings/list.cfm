@@ -225,6 +225,20 @@ version 2 without this exception.  You may, if you choose, apply this exception 
 				<input name="newPlugin" type="file" required="true" message="Please select a plugin file.">
 				<input type="submit" value="Deploy" class="btn"/>
 			</form>
+
+			<div>
+
+			<form  name="frmNewPluginFROMURL" action="index.cfm?muraAction=cSettings.deployPlugin" method="post">
+				Install plugin from url<br/>
+
+
+				<input name="newPluginUrl"  class="input-xxlarge" type="url" required="true" placeholder="http://www.domain.com/plugin.zip"
+				message="Please enter the url for your plugin file"
+				value="">
+				<input type="submit" value="Download and Deploy" class="btn"/>
+			</form>
+			</div>
+
 			<table class="table table-striped table-condensed table-bordered mura-table-grid">
 				<tr>
 					<th class="var-width">Name</th>
