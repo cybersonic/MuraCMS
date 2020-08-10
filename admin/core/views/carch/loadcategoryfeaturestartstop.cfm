@@ -28,13 +28,10 @@ Your custom code
 • May not alter the default display of the Mura CMS logo within Mura CMS and
 • Must not alter any files in the following directories.
 
- /admin/
- /tasks/
- /config/
- /requirements/mura/
- /Application.cfc
- /index.cfm
- /MuraProxy.cfc
+	/admin/
+	/core/
+	/Application.cfc
+	/index.cfm
 
 You may copy and distribute Mura CMS with a plug-in, theme or bundle that meets the above guidelines as a combined work 
 under the terms of GPL for Mura CMS, provided that you include the source code of that other code when and as the GNU GPL 
@@ -50,32 +47,32 @@ version 2 without this exception.  You may, if you choose, apply this exception 
 </cfif>
 <cfoutput>
 	<div class="categoryassignmentcontent<cfif rc.categoryAssignment eq '2'> scheduled</cfif>">
-		<a class="dropdown-toggle mura-quickEditItem"<cfif rc.categoryAssignment eq '2'> rel="tooltip" title="#HTMLEditFormat(LSDateFormat(rc.featurestart,"short"))#&nbsp;-&nbsp;#LSDateFormat(rc.featurestop,"short")#"<cfelse>class="mura-quickEditItem"</cfif>>
+		<a class="dropdown-toggle mura-quickEditItem"<cfif rc.categoryAssignment eq '2'> rel="tooltip" title="#esapiEncode('html_attr',LSDateFormat(rc.featurestart,"short"))#&nbsp;-&nbsp;#LSDateFormat(rc.featurestop,"short")#"<cfelse>class="mura-quickEditItem"</cfif>>
 			<cfswitch expression="#rc.categoryAssignment#">		
 				<cfcase value="0">
-					<i class="icon-ban-circle" title="#HTMLEditFormat(application.rbFactory.getKeyValue(session.rb,'sitemanager.no'))#"></i><span>#HTMLEditFormat(application.rbFactory.getKeyValue(session.rb,'sitemanager.no'))#</span>
+					<i class="mi-ban" title="#esapiEncode('html_attr',application.rbFactory.getKeyValue(session.rb,'sitemanager.no'))#"></i><span>#esapiEncode('html',application.rbFactory.getKeyValue(session.rb,'sitemanager.no'))#</span>
 				</cfcase>
 				<cfcase value="1">
-					<i class="icon-ok" title="#HTMLEditFormat(application.rbFactory.getKeyValue(session.rb,'sitemanager.yes'))#"></i><span>#HTMLEditFormat(application.rbFactory.getKeyValue(session.rb,'sitemanager.yes'))#</span>
+					<i class="mi-check" title="#esapiEncode('html_attr',application.rbFactory.getKeyValue(session.rb,'sitemanager.yes'))#"></i><span>#esapiEncode('html',application.rbFactory.getKeyValue(session.rb,'sitemanager.yes'))#</span>
 				</cfcase>
 				<cfcase value="2">
-					<i class="icon-calendar" title="#HTMLEditFormat(LSDateFormat(rc.featurestart,"short"))#&nbsp;-&nbsp;#LSDateFormat(rc.featurestop,"short")#"></i> 
+					<i class="mi-calendar" title="#esapiEncode('html_attr',LSDateFormat(rc.featurestart,"short"))#&nbsp;-&nbsp;#LSDateFormat(rc.featurestop,"short")#"></i> 
 				</cfcase>
 				<cfdefaultcase>
-					<i class="icon-ban-circle" title="#HTMLEditFormat(application.rbFactory.getKeyValue(session.rb,'sitemanager.no'))#"></i><span>#HTMLEditFormat(application.rbFactory.getKeyValue(session.rb,"sitemanager.no"))#</span>
+					<i class="mi-ban" title="#esapiEncode('html_attr',application.rbFactory.getKeyValue(session.rb,'sitemanager.no'))#"></i><span>#esapiEncode('html',application.rbFactory.getKeyValue(session.rb,"sitemanager.no"))#</span>
 				</cfdefaultcase>
 			</cfswitch>
 		</a>
-		<input type="hidden" id="categoryAssign#catTrim#" name="categoryAssign#catTrim#" value="#HTMLEditFormat(rc.categoryAssignment)#"/>
+		<input type="hidden" id="categoryAssign#rc.catTrim#" name="categoryAssign#rc.catTrim#" value="#esapiEncode('html_attr',rc.categoryAssignment)#"/>
 		<cfif rc.categoryAssignment eq 2>
-			<input type="hidden" id="featureStart#catTrim#" name="featureStart#catTrim#" value="#LSDateFormat(rc.featureStart,session.dateKeyFormat)#">
-			<input type="hidden" id="startHour#catTrim#" name="startHour#catTrim#" value="#HTMLEditFormat(rc.startHour)#">
-			<input type="hidden" id="startMinute#catTrim#" name="startMinute#catTrim#" value="#HTMLEditFormat(rc.startMinute)#">
-			<input type="hidden" id="startDayPart#catTrim#" name="startDayPart#catTrim#" value="#HTMLEditFormat(rc.startDayPart)#">
-			<input type="hidden" id="featureStop#catTrim#" name="featureStop#catTrim#" value="#LSDateFormat(rc.featureStop,session.dateKeyFormat)#">
-			<input type="hidden" id="stopHour#catTrim#" name="stopHour#catTrim#" value="#HTMLEditFormat(rc.stopHour)#">
-			<input type="hidden" id="stopMinute#catTrim#" name="stopMinute#catTrim#" value="#HTMLEditFormat(rc.stopMinute)#">
-			<input type="hidden" id="stopDayPart#catTrim#" name="stopDayPart#catTrim#" value="#HTMLEditFormat(rc.stopDayPart)#">
+			<input type="hidden" id="featureStart#rc.catTrim#" name="featureStart#rc.catTrim#" value="#LSDateFormat(rc.featureStart,session.dateKeyFormat)#">
+			<input type="hidden" id="startHour#rc.catTrim#" name="startHour#rc.catTrim#" value="#esapiEncode('html_attr',rc.startHour)#">
+			<input type="hidden" id="startMinute#rc.catTrim#" name="startMinute#rc.catTrim#" value="#esapiEncode('html_attr',rc.startMinute)#">
+			<input type="hidden" id="startDayPart#rc.catTrim#" name="startDayPart#rc.catTrim#" value="#esapiEncode('html_attr',rc.startDayPart)#">
+			<input type="hidden" id="featureStop#rc.catTrim#" name="featureStop#rc.catTrim#" value="#LSDateFormat(rc.featureStop,session.dateKeyFormat)#">
+			<input type="hidden" id="stopHour#rc.catTrim#" name="stopHour#rc.catTrim#" value="#esapiEncode('html_attr',rc.stopHour)#">
+			<input type="hidden" id="stopMinute#rc.catTrim#" name="stopMinute#rc.catTrim#" value="#esapiEncode('html_attr',rc.stopMinute)#">
+			<input type="hidden" id="stopDayPart#rc.catTrim#" name="stopDayPart#rc.catTrim#" value="#esapiEncode('html_attr',rc.stopDayPart)#">
 		</cfif>
 	</div>
 </cfoutput>

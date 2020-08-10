@@ -28,13 +28,10 @@ Your custom code
 • May not alter the default display of the Mura CMS logo within Mura CMS and
 • Must not alter any files in the following directories.
 
- /admin/
- /tasks/
- /config/
- /requirements/mura/
- /Application.cfc
- /index.cfm
- /MuraProxy.cfc
+	/admin/
+	/core/
+	/Application.cfc
+	/index.cfm
 
 You may copy and distribute Mura CMS with a plug-in, theme or bundle that meets the above guidelines as a combined work 
 under the terms of GPL for Mura CMS, provided that you include the source code of that other code when and as the GNU GPL 
@@ -45,31 +42,36 @@ modified version; it is your choice whether to do so, or to make such modified v
 version 2 without this exception.  You may, if you choose, apply this exception to your own modified versions of Mura CMS.
 --->
 <cfoutput>
-<h1>#application.rbFactory.getKeyValue(session.rb,"plugin.siteplugins")#</h1>
+
+<div class="mura-header">
+	<h1>#application.rbFactory.getKeyValue(session.rb,"plugin.siteplugins")#</h1>
+	<cfinclude template="dsp_secondary_menu.cfm">
+</div> <!-- /.mura-header -->
 
 <cfset started=false>
-	<div class="tabbable">
-		<ul class="nav nav-tabs tabs initActiveTab">
-		<li><a href="##tab#ucase('Application')#" onclick="return false;"><span>Application</span></a></li>
+	<div class="block block-constrain">
+	<ul class="mura-tabs nav-tabs" data-toggle="tabs">
+		<li class="active"><a href="##tab#ucase('Application')#" onclick="return false;"><span>Application</span></a></li>
 		<li><a href="##tab#ucase('Utility')#" onclick="return false;"><span>Utility</span></a></li>
 		<cfloop collection="#rc.plugingroups#" item="local.category" >
 			<cfif not listFind("Application,Utility",local.category) and rc.plugingroups[local.category].recordCount>
-				<li><a href="##tab#ucase(replace(local.category,' ','','all'))#" onclick="return false;"><span>#local.category#</span></a></li>
+				<li><a href="##tab#ucase(replace(local.category,' ','','all'))#" onclick="return false;"><span>#esapiEncode('html',local.category)#</span></a></li>
 			</cfif>
 		</cfloop>
 		</ul>
-		<div class="tab-content">
-		<cfset rscategorylist = rc.plugingroups['Application']/>
-		<cfset local.category = "Application" />
-		<cfinclude template="dsp_table.cfm" />
-		<cfset rscategorylist = rc.plugingroups['Utility']/>
-		<cfset local.category = "Utility" />
-		<cfinclude template="dsp_table.cfm" />
-		<cfloop collection="#rc.plugingroups#" item="local.category" >
-			<cfif not listFind("Application,Utility",local.category) and rc.plugingroups[local.category].recordCount>
-				<cfset rscategorylist = rc.plugingroups[local.category]/>
-				<cfinclude template="dsp_table.cfm" />
-			</cfif>
-		</cfloop>
-	</div>
+		<div class="tab-content block-content">
+			<cfset rscategorylist = rc.plugingroups['Application']/>
+			<cfset local.category = "Application" />
+			<cfinclude template="dsp_table.cfm" />
+			<cfset rscategorylist = rc.plugingroups['Utility']/>
+			<cfset local.category = "Utility" />
+			<cfinclude template="dsp_table.cfm" />
+			<cfloop collection="#rc.plugingroups#" item="local.category" >
+				<cfif not listFind("Application,Utility",local.category) and rc.plugingroups[local.category].recordCount>
+					<cfset rscategorylist = rc.plugingroups[local.category]/>
+					<cfinclude template="dsp_table.cfm" />
+				</cfif>
+			</cfloop>
+		</div>
+	</div> <!-- /.block-constrain -->
 </cfoutput>

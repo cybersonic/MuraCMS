@@ -28,13 +28,10 @@ Your custom code
 • May not alter the default display of the Mura CMS logo within Mura CMS and
 • Must not alter any files in the following directories.
 
- /admin/
- /tasks/
- /config/
- /requirements/mura/
- /Application.cfc
- /index.cfm
- /MuraProxy.cfc
+	/admin/
+	/core/
+	/Application.cfc
+	/index.cfm
 
 You may copy and distribute Mura CMS with a plug-in, theme or bundle that meets the above guidelines as a combined work 
 under the terms of GPL for Mura CMS, provided that you include the source code of that other code when and as the GNU GPL 
@@ -50,29 +47,32 @@ version 2 without this exception.  You may, if you choose, apply this exception 
 <cfset counter=0 />
 <cfoutput>
 <div id="contentSearch" class="form-inline">
-	<input id="parentSearch" name="parentSearch" value="#HTMLEditFormat(rc.keywords)#" type="text" maxlength="50" placeholder="Search Content" /> <input type="button" class="btn" onclick="feedManager.loadSiteParents('#rc.siteid#','#rc.parentid#',document.getElementById('parentSearch').value,0);" value="#application.rbFactory.getKeyValue(session.rb,'collections.search')#" />
+	<div class="mura-input-set">
+	<input id="parentSearch" name="parentSearch" value="#esapiEncode('html_attr',rc.keywords)#" type="text" maxlength="50" placeholder="Search Content" onclick="return false;"> 
+	<input type="button" class="btn" onclick="feedManager.loadSiteParents('#rc.siteid#','#rc.parentid#',document.getElementById('parentSearch').value,0);" value="#application.rbFactory.getKeyValue(session.rb,'collections.search')#">
+	</div>
 </div>
 </cfoutput>
 
 <cfif not rc.isNew>
 <cfset rc.rsList=application.contentManager.getPrivateSearch(rc.siteid,rc.keywords)/>
- <table class="table table-striped table-condensed table-bordered mura-table-grid">
+ <table class="mura-table-grid">
     <thead>
     <tr> 
-      <th class="var-width"><cfoutput>#application.rbFactory.getKeyValue(session.rb,'collections.selectnewsection')#</cfoutput></th>
-	  <th class="actions">&nbsp;</th>
+	  <th class="actions"></th>
+    <th class="var-width"><cfoutput>#application.rbFactory.getKeyValue(session.rb,'collections.selectnewsection')#</cfoutput></th>
     </tr>
     </thead>
     <cfif rc.rslist.recordcount>
     <tbody>
 	<tr class="alt"><cfoutput>  
+	  <td class="actions"><input type="radio" name="parentid" value="#esapiEncode('html_attr',rc.parentid)#" checked="checked"></td>
 		<cfif rc.parentID neq ''>
 		<cfset parentCrumb=application.contentManager.getCrumbList(rc.parentid, rc.siteid)/>
-         <td class="var-width">#application.contentRenderer.dspZoomNoLinks(parentCrumb)#</td>
+         <td class="var-width">#$.dspZoomNoLinks(parentCrumb)#</td>
 		 <cfelse>
 		  <td class="var-width">#application.rbFactory.getKeyValue(session.rb,'collections.noneselected')#</td>
 		 </cfif>
-		  <td class="actions"><input type="radio" name="parentid" value="#rc.parentid#" checked="checked"></td>
 		</tr></cfoutput>
      <cfoutput query="rc.rslist" startrow="1" maxrows="100">
 		<cfset crumbdata=application.contentManager.getCrumbList(rc.rslist.contentid, rc.siteid)/> 
@@ -80,18 +80,18 @@ version 2 without this exception.  You may, if you choose, apply this exception 
 		<cfif verdict neq 'none'  and rc.parentID neq  rc.rslist.contentid>	
 			<cfset counter=counter+1/>
 		<tr <cfif not(counter mod 2)>class="alt"</cfif>>  
-          <td class="var-width">#application.contentRenderer.dspZoomNoLinks(crumbdata)#</td>
 		  <td class="actions"><input type="radio" name="parentid" value="#rc.rslist.contentid#"></td>
+      <td class="var-width">#$.dspZoomNoLinks(crumbdata)#</td>
 		</tr>
 	 </cfif>
        </cfoutput>
 	 	<cfelse>
 		<tr class="alt"><cfoutput>  
-		  <td class="noResults" colspan="2">#application.rbFactory.getKeyValue(session.rb,'collections.nosearchresults')#<input type="hidden" name="parentid" value="#rc.parentid#" /> </td>
+		  <td class="noResults" colspan="2">#application.rbFactory.getKeyValue(session.rb,'collections.nosearchresults')#<input type="hidden" name="parentid" value="#esapiEncode('html_attr',rc.parentid)#" /> </td>
 		</tr></cfoutput>
 		</cfif>
 		</tbody>
   </table>
 <cfelse>
-<cfoutput><input type="hidden" name="parentid" value="#rc.parentid#" /></cfoutput>
+<cfoutput><input type="hidden" name="parentid" value="#esapiEncode('html_attr',rc.parentid)#" /></cfoutput>
 </cfif>

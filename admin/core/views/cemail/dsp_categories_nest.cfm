@@ -28,13 +28,10 @@ Your custom code
 • May not alter the default display of the Mura CMS logo within Mura CMS and
 • Must not alter any files in the following directories.
 
- /admin/
- /tasks/
- /config/
- /requirements/mura/
- /Application.cfc
- /index.cfm
- /MuraProxy.cfc
+	/admin/
+	/core/
+	/Application.cfc
+	/index.cfm
 
 You may copy and distribute Mura CMS with a plug-in, theme or bundle that meets the above guidelines as a combined work 
 under the terms of GPL for Mura CMS, provided that you include the source code of that other code when and as the GNU GPL 
@@ -45,7 +42,17 @@ modified version; it is your choice whether to do so, or to make such modified v
 version 2 without this exception.  You may, if you choose, apply this exception to your own modified versions of Mura CMS.
 --->
 
-<cfsilent><cfparam name="attributes.siteID" default="">
+<cfsilent>
+<cfscript>
+	if(server.coldfusion.productname != 'ColdFusion Server'){
+		backportdir='';
+		include "/mura/backport/backport.cfm";
+	} else {
+		backportdir='/mura/backport/';
+		include "#backportdir#backport.cfm";
+	}
+</cfscript>
+<cfparam name="attributes.siteID" default="">
 <cfparam name="attributes.parentID" default="">
 <cfparam name="attributes.groupID" default="">
 <cfparam name="attributes.nestLevel" default="1">
@@ -55,7 +62,7 @@ version 2 without this exception.  You may, if you choose, apply this exception 
 <ul<cfif not attributes.nestLevel> class="checkboxTree"</cfif>>
 <cfoutput query="rslist">
 <li>
-<input type="checkbox" name="groupID" class="checkbox" <cfif listfind(attributes.groupID,rslist.categoryID)>checked</cfif> value="#rslist.categoryID#"> #rslist.name#
+<input type="checkbox" name="groupID" class="checkbox" <cfif listfind(attributes.groupID,rslist.categoryID)>checked</cfif> value="#rslist.categoryID#"> #esapiEncode('html',rslist.name)#
 <cf_dsp_categories_nest siteID="#attributes.siteID#" groupid="#attributes.groupID#" parentID="#rslist.categoryID#" nestLevel="#evaluate(attributes.nestLevel +1)#" >
 </li>
 </cfoutput>

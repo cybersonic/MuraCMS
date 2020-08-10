@@ -28,13 +28,10 @@ Your custom code
 • May not alter the default display of the Mura CMS logo within Mura CMS and
 • Must not alter any files in the following directories.
 
- /admin/
- /tasks/
- /config/
- /requirements/mura/
- /Application.cfc
- /index.cfm
- /MuraProxy.cfc
+	/admin/
+	/core/
+	/Application.cfc
+	/index.cfm
 
 You may copy and distribute Mura CMS with a plug-in, theme or bundle that meets the above guidelines as a combined work 
 under the terms of GPL for Mura CMS, provided that you include the source code of that other code when and as the GNU GPL 
@@ -47,10 +44,24 @@ version 2 without this exception.  You may, if you choose, apply this exception 
 <cfset tabLabelList=listAppend(tabLabelList,application.rbFactory.getKeyValue(session.rb,"sitemanager.content.tabs.extendedattributes"))/>
 <cfset tabList=listAppend(tabList,"tabExtendedAttributes")>
 <cfoutput>
-<div id="tabExtendedAttributes" class="tab-pane fade">
+<div id="tabExtendedAttributes" class="tab-pane">
+
+	<!-- block -->
+  <div class="block block-bordered">
+  	<!-- block header -->
+    <div class="block-header">
+			<h3 class="block-title">Extended Attributes</h3>
+    </div>
+    <!-- /block header -->
+		
+		<!-- block content -->
+		<div class="block-content">
+
 	<span id="extendset-container-tabextendedattributestop" class="extendset-container"></span>
 	<span id="extendset-container-default" class="extendset-container"></span>
 	<span id="extendset-container-tabextendedattributesbottom" class="extendset-container"></span>
-</div>
 
+    </div> <!--- /.block-content --->
+  </div> <!--- /.block --->   
+</div> <!--- /.tab-pane --->
 </cfoutput>

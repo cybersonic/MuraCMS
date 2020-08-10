@@ -28,13 +28,10 @@ Your custom code
 • May not alter the default display of the Mura CMS logo within Mura CMS and
 • Must not alter any files in the following directories.
 
- /admin/
- /tasks/
- /config/
- /requirements/mura/
- /Application.cfc
- /index.cfm
- /MuraProxy.cfc
+	/admin/
+	/core/
+	/Application.cfc
+	/index.cfm
 
 You may copy and distribute Mura CMS with a plug-in, theme or bundle that meets the above guidelines as a combined work 
 under the terms of GPL for Mura CMS, provided that you include the source code of that other code when and as the GNU GPL 
@@ -58,22 +55,43 @@ version 2 without this exception.  You may, if you choose, apply this exception 
 <cfset homeBean = application.contentManager.getActiveContent(event.getValue('homeID'), event.getValue('siteID'))>
 <cfset href = contentRenderer.createHREF(homeBean.getType(), homeBean.getFilename(), homeBean.getSiteId(), homeBean.getcontentId())>
 <cfoutput>
-<script src="#application.configBean.getContext()#/admin/assets/js/jquery/jquery.js?coreversion=#application.coreversion#" type="text/javascript"></script>
-<script src="#application.configBean.getContext()#/admin/assets/js/porthole/porthole.min.js?coreversion=#application.coreversion#" type="text/javascript"></script>
+<script src="#application.configBean.getContext()##application.configBean.getAdminDir()#/assets/js/jquery/jquery.js?coreversion=#application.coreversion#" type="text/javascript"></script>
+<script src="#application.configBean.getContext()##application.configBean.getAdminDir()#/assets/js/porthole/porthole.min.js?coreversion=#application.coreversion#" type="text/javascript"></script>
 <script>
 	function reload(){
 		if (top.location != self.location) {
-			frontEndProxy = new Porthole.WindowProxy("#session.frontEndProxyLoc##application.configBean.getContext()#/admin/assets/js/porthole/proxy.html");
+
+			<cfif rc.$.getContentRenderer().useLayoutmanager()>
+				<cfif len(rc.instanceid)>
+					var cmd={cmd:'setObjectParams',reinit:true,instanceid:'#rc.instanceid#',params:{sourceid:'#rc.feedBean.getFeedId()#'}};
+
+					<cfif rc.feedBean.getType() eq 'Local'>
+						cmd.params.sourcetype='localindex';
+					<cfelse>
+						cmd.params.sourcetype='remotefeed';
+					</cfif>
+				<cfelse>
+					var cmd={cmd:'reloadObjectAndClose',objectid:'#rc.feedBean.getFeedId()#'};
+				</cfif>
+				
+			<cfelse>
+				var cmd={cmd:'setLocation',location:encodeURIComponent("#esapiEncode('javascript',href)#")};
+			</cfif>
+
+			frontEndProxy = new Porthole.WindowProxy("#esapiEncode('javascript',session.frontEndProxyLoc)##application.configBean.getContext()##application.configBean.getAdminDir()#/assets/js/porthole/proxy.html");
+
 			if (jQuery("##ProxyIFrame").length) {
 				jQuery("##ProxyIFrame").load(function(){
-					frontEndProxy.post({cmd:'setLocation',location: encodeURIComponent("#JSStringFormat(href)#")});
+					frontEndProxy.post({cmd:'scrollToTop'});
+					frontEndProxy.post(cmd);
 				});
+			} else {
+				frontEndProxy.post({cmd:'scrollToTop'});
+				frontEndProxy.post(cmd);
 			}
-			else {
-				frontEndProxy.post({cmd:'setLocation',location: encodeURIComponent("#JSStringFormat(href)#")});
-			}
+
 		} else {
-			location.href="#JSStringFormat(href)#";
+			location.href="#esapiEncode('javascript',href)#";
 		}
 	}
 	

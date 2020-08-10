@@ -28,13 +28,10 @@ Your custom code
 • May not alter the default display of the Mura CMS logo within Mura CMS and
 • Must not alter any files in the following directories.
 
- /admin/
- /tasks/
- /config/
- /requirements/mura/
- /Application.cfc
- /index.cfm
- /MuraProxy.cfc
+	/admin/
+	/core/
+	/Application.cfc
+	/index.cfm
 
 You may copy and distribute Mura CMS with a plug-in, theme or bundle that meets the above guidelines as a combined work 
 under the terms of GPL for Mura CMS, provided that you include the source code of that other code when and as the GNU GPL 
@@ -45,34 +42,43 @@ modified version; it is your choice whether to do so, or to make such modified v
 version 2 without this exception.  You may, if you choose, apply this exception to your own modified versions of Mura CMS.
 --->
 <cfoutput>
-<h1>Site Copy Tool</h1>
-<!--- ><p class="alert">IMPORTANT: All content in the site that is being copied to will be replaced.</p> --->
-<p class="alert">IMPORTANT: All content in the destination site ("To") will be deleted and replaced with the source site's ("From") content.</p>
-<form action="index.cfm" onsubmit="if(validateForm(this)){jQuery('.form-actions').hide();jQuery('##actionIndicator').show();return true;}else{return false;};">
-<div class="control-group">
-     <label class="control-label">From</label>
-     <div class="controls"><select name="fromSiteID" required="true" message="The 'SOURCE' site is required.">
-		<option value="">--Select Source Site--</option>
-		<cfloop query="rc.rsSites">
-			<option value="#rc.rsSites.siteid#">#rc.rsSites.site#</option>
-		</cfloop>
-		</select>
-	 </div>
+<div class="mura-header">
+<h1>Copy Site</h1>
+</div> <!-- /.mura-header -->
+
+<div class="alert alert-warning"><span>IMPORTANT: All content in the destination site ("To") will be deleted and replaced with the source site's ("From") content.</span></div>
+
+<div class="block block-constrain">
+	<div class="block block-bordered">
+	  <div class="block-content">
+
+
+<form action="./" onsubmit="if(validateForm(this)){actionModal(function(){});return true;}else{return false;};">
+<div class="mura-control-group">
+   <label>From</label>
+   <select name="fromSiteID" required="true" message="The 'SOURCE' site is required.">
+	<option value="">--Select Source Site--</option>
+	<cfloop query="rc.rsSites">
+		<option value="#rc.rsSites.siteid#">#esapiEncode('html',rc.rsSites.site)#</option>
+	</cfloop>
+	</select>
  </div>
- <div class="control-group">
-    <label class="control-label">To</label>
-    <div class="controls"><select name="toSiteID" required="true" message="The 'DESTINATION' site is required.">
-		<option value="">--Select Destination Site--</option>
-		<cfloop query="rc.rsSites">
-			<option value="#rc.rsSites.siteid#">#rc.rsSites.site#</option>
-		</cfloop>
-		</select>
-	 </div>
+ <div class="mura-control-group">
+  <label>To</label>
+  	<select name="toSiteID" required="true" message="The 'DESTINATION' site is required.">
+	<option value="">--Select Destination Site--</option>
+	<cfloop query="rc.rsSites">
+		<option value="#rc.rsSites.siteid#">#esapiEncode('html',rc.rsSites.site)#</option>
+	</cfloop>
+	</select>
 </div>
 
 <input type="hidden" name="muraAction" value="cSettings.sitecopy">
-<div class="clearfix form-actions">
+
 <input type="submit" value="Copy" class="btn">
-</div>
+#rc.$.renderCSRFTokens(context='sitecopy',format="form")#
 </form>
+		</div> <!-- /.block-content -->
+	</div> <!-- /.block-bordered -->
+</div> <!-- /.block-constrain -->
 </cfoutput>

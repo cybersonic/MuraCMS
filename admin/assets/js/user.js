@@ -31,7 +31,7 @@
 	 /admin/
 	 /tasks/
 	 /config/
-	 /requirements/mura/
+	 /core/mura/
 	 /Application.cfc
 	 /index.cfm
 	 /MuraProxy.cfc
@@ -45,9 +45,101 @@
 	version 2 without this exception.  You may, if you choose, apply this exception to your own modified versions of Mura CMS. */
 
 var userManager = {
+	//submitDialogs:[{type:'alert',message:'test1',condition:function(){return true}},{type:'confirmation',message:'test2',condition:function(){return true}}],
+	submitDialogs:[],
+	submitActions:[],
+	addSubmitDialog:function(dialog){
+		userManager.submitDialogs.push(dialog)
+	},
+	addSubmitAction:function(actionFn){
+		userManager.submitActions.push(actionFn)
+	},
+	submitForm: function(frm,action){
+		var handled=0;
+		var cancelled=false;
+		var dialogs=userManager.submitDialogs;
+		var actions=userManager.submitActions;
+		
+		if(action){
+			frm.action.value=action;
+		}
+
+		function submit(){
+			var i;
+
+			for(i in CKEDITOR.instances){
+				CKEDITOR.instances[i].updateElement();
+			}
+
+			for(i=0;i<dialogs.length;i++){
+				if(i == handled){
+					var dialog=dialogs[i];
+					
+					if(dialog.type.toLowerCase()=='confirmation'){
+						if(typeof dialog.condition == 'function'){
+							if(dialog.condition(dialog)){
+								confirmDialog($.extend(dialog,{yesAction:function(){handled++; submit()}}));
+
+								return false
+							} else {
+								handled++;
+							}
+						} else {
+							confirmDialog($.extend(dialog,{yesAction:function(){handled++; submit()}}));
+
+							return false
+						} 
+					} else if (dialog.type.toLowerCase()=='alert'){
+						if(typeof dialog.condition == 'function'){
+							if(dialog.condition(dialog)){
+								alertDialog($.extend(dialog,{okAction:function(){handled++; submit()}}));
+
+								return false
+							} else {
+								handled++;
+							}
+						} else {
+							alertDialog($.extend(dialog,{okAction:function(){handled++; submit()}}));
+
+							return false
+						}
+					} else if (dialog.type.toLowerCase()=='validation'){
+						if(typeof dialog.condition == 'function'){
+							if(dialog.condition(dialog)){
+								alertDialog($.extend(dialog,{okAction:function(){handled++;}}));
+
+								return false
+							} else {
+								handled++;
+							}
+						} else {
+							handled++;
+						}
+					} else {
+						handled++;
+					}
+				}
+			}
+
+			if(handled==dialogs.length){
+				for(var i=0;i<actions.length;i++){
+					actions[i]();
+				}
+
+				actionModal(function(){frm.submit()});
+			}
+		}
+
+		if(validateForm(frm)){
+
+			submit();
+		}
+
+		return false;
+	},
 	loadExtendedAttributes: function(baseID, type, subType, _siteID, _context, _themeAssetPath) {
 		var url = 'index.cfm';
-		var pars = 'muraAction=cPublicUsers.loadExtendedAttributes&baseID=' + baseID + '&type=' + type + '&subType=' + subType + '&siteID=' + _siteID + '&cacheid=' + Math.random();
+		var pars = 'muraAction=cUsers.loadExtendedAttributes&baseID=' + baseID + '&type=' + type + '&subType=' + subType + '&siteID=' + _siteID + '&cacheid=' + Math.random();
 
 		siteID = _siteID;
 		context = _context;
@@ -58,11 +150,16 @@ var userManager = {
 
 		if(d.length) {
 			d.html('<div class="load-inline"></div>');
-			$.get(url + "?" + pars, function(data) {
-				if(data.indexOf('mura-primary-login-token') != -1) {
-					location.href = './';
+			$.ajax({
+				url: url + "?" + pars,
+				dataType: 'text', 
+				success: function(data) {
+
+					if(data.indexOf('mura-primary-login-token') != -1) {
+						location.href = './';
+					}
+					userManager.setExtendedAttributes(data);
 				}
-				userManager.setExtendedAttributes(data);
 			});
 		}
 
@@ -80,10 +177,12 @@ var userManager = {
 			$('#tabExtendedattributesLI').removeClass('hide');
 		}
 		//checkExtendSetTargeting();
-		setHTMLEditors(context, themeAssetPath);
-		setDatePickers(".tabcontent .datepicker", dtLocale);
-		setColorPickers(".tabcontent .colorpicker");
-		setToolTips(".tabcontent");
+		setHTMLEditors();
+		setDatePickers(".tab-content .datepicker", dtLocale);
+		setColorPickers(".tab-content .colorpicker");
+		setFinders(".tab-content .mura-ckfinder");
+		setToolTips(".tab-content");
+		setFileSelectors();
 
 	},
 

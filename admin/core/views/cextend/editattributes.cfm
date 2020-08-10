@@ -28,13 +28,10 @@ Your custom code
 • May not alter the default display of the Mura CMS logo within Mura CMS and
 • Must not alter any files in the following directories.
 
- /admin/
- /tasks/
- /config/
- /requirements/mura/
- /Application.cfc
- /index.cfm
- /MuraProxy.cfc
+	/admin/
+	/core/
+	/Application.cfc
+	/index.cfm
 
 You may copy and distribute Mura CMS with a plug-in, theme or bundle that meets the above guidelines as a combined work 
 under the terms of GPL for Mura CMS, provided that you include the source code of that other code when and as the GNU GPL 
@@ -50,61 +47,69 @@ version 2 without this exception.  You may, if you choose, apply this exception 
 <cfset extendSet=subType.loadSet(rc.extendSetID)/>
 <cfset attributesArray=extendSet.getAttributes() />
 
-<h1>Manage Attributes Set</h1>
-
 <cfoutput>
-<div id="nav-module-specific" class="btn-toolbar">
-	<div class="btn-group">
-	<a class="btn" href="index.cfm?muraAction=cExtend.listSubTypes&siteid=#URLEncodedFormat(rc.siteid)#"><i class="icon-circle-arrow-left"></i> Back to Class Extensions</a>
-	<a class="btn" href="index.cfm?muraAction=cExtend.editSubType&subTypeID=#URLEncodedFormat(rc.subTypeID)#&siteid=#URLEncodedFormat(rc.siteid)#"><i class="icon-pencil"></i> Edit Class Extension</a>
-	</div>
-	<div class="btn-group">
-	<a class="btn" href="index.cfm?muraAction=cExtend.listSets&subTypeID=#URLEncodedFormat(rc.subTypeID)#&siteid=#URLEncodedFormat(rc.siteid)#"><i class="icon-circle-arrow-left"></i> Back to Attribute Sets</a>
-	<a class="btn" href="index.cfm?muraAction=cExtend.editSet&subTypeID=#URLEncodedFormat(rc.subTypeID)#&extendSetID=#URLEncodedFormat(rc.extendSetID)#&siteid=#URLEncodedFormat(rc.siteid)#"><i class="icon-pencil"></i> Edit Attribute Set</a>
-	</div>
-</div>
+<div class="mura-header">
+  <h1>Manage Extended Attribute Set</h1>
+    <div class="nav-module-specific btn-group">
+     <div class="btn-group">
+    <a class="btn dropdown-toggle" data-toggle="dropdown" href="##">
+             <i class="mi-arrow-circle-left"></i> Back <span class="caret"></span>
+     </a>
+     <ul class="dropdown-menu">
+        <li><a href="./?muraAction=cExtend.listSubTypes&siteid=#esapiEncode('url',rc.siteid)#">Back to Class Extensions</a></li>
+        <li><a href="./?muraAction=cExtend.listSets&subTypeID=#esapiEncode('url',rc.subTypeID)#&siteid=#esapiEncode('url',rc.siteid)#">Back to Class Extension Overview</a></li>
+     </ul>
+     </div>
+     <div class="btn-group">
+     <a class="btn dropdown-toggle" data-toggle="dropdown" href="##">
+             <i class="mi-pencil"></i> Edit <span class="caret"></span>
+     </a>
+     <ul class="dropdown-menu">
+        <li><a href="./?muraAction=cExtend.editSubType&subTypeID=#esapiEncode('url',rc.subTypeID)#&siteid=#esapiEncode('url',rc.siteid)#">Class Extension</a></li>
+        <li><a href="./?muraAction=cExtend.editSet&subTypeID=#esapiEncode('url',rc.subTypeID)#&extendSetID=#esapiEncode('url',rc.extendSetID)#&siteid=#esapiEncode('url',rc.siteid)#">Attribute Set</a></li>
+     </ul>
+     </div>
+    </div>
 
-<ul class="metadata">
-	<li><strong>Class Extension:</strong> #application.classExtensionManager.getTypeAsString(subType.getType())#/#subType.getSubType()#</li>
-	<li><strong>Attributes Set:</strong> #extendSet.getName()#</li>
-</ul>
+</div> <!-- /.mura-header -->
 
-<cfset newAttribute=extendSet.getAttributeBean() />
-<cfset newAttribute.setSiteID(rc.siteID) />
-<cfset newAttribute.setOrderno(arrayLen(attributesArray)+1) />
-<cf_dsp_attribute_form attributesArray="#attributesArray#" attributeBean="#newAttribute#" action="add" subTypeID="#rc.subTypeID#" formName="newFrm">
+<div class="block block-constrain">
+    <div class="block block-bordered">
+      <div class="block-content">      
+      <h2><i class="#subtype.getIconClass(includeDefault=true)#"></i> #application.classExtensionManager.getTypeAsString(subType.getType())# / #subType.getSubType()#</h2>
 
-<!---
-<cfif arrayLen(attributesArray)>
-<ul class="nav nav-pills">
-<li><a href="javascript:;" class="btn" style="display:none;" id="saveSort" onclick="extendManager.saveAttributeSort('attributesList');return false;"><i class="icon-check"></i> Save Order</a></li>
-<li><a href="javascript:;" class="btn" id="showSort" onclick="extendManager.showSaveSort('attributesList');return false;"><i class="icon-move"></i> Reorder</a></li>
-</ul>
-</cfif>
---->
+      <h3><strong>Attributes Set:</strong> #extendSet.getName()#</h3>
 
-<cfif arrayLen(attributesArray)>
-<ul id="attributesList" class="attr-list">
-<cfloop from="1" to="#arrayLen(attributesArray)#" index="a">	
-<cfset attributeBean=attributesArray[a]/>
-<cfoutput>
+      <cfset newAttribute=extendSet.getAttributeBean() />
+      <cfset newAttribute.setSiteID(rc.siteID) />
+      <cfset newAttribute.setOrderno(arrayLen(attributesArray)+1) />
+      <cf_dsp_attribute_form attributesArray="#attributesArray#" attributeBean="#newAttribute#" action="add" subTypeID="#rc.subTypeID#" formName="newFrm" muraScope="#rc.$#">
+
+      <cfif arrayLen(attributesArray)>
+      <ul id="attributesList" class="attr-list">
+      <cfloop from="1" to="#arrayLen(attributesArray)#" index="a">	
+      <cfset attributeBean=attributesArray[a]/>
+      <cfoutput>
 	<li test attributeID="#attributeBean.getAttributeID()#">
-		<span id="handle#a#" class="handle" style="display:none;"><i class="icon-move"></i></span>
+      		<span id="handle#a#" class="handle" style="display:none;"><i class="mi-arrows"></i></span>
 		<p>#attributeBean.getName()#</p>
 		<div class="btns">
-		<a title="Edit" href="javascript:;" id="editFrm#a#open" onclick="jQuery('##editFrm#a#container').slideDown();this.style.display='none';jQuery('##editFrm#a#close').show();;$('li[attributeID=#attributeBean.getAttributeID()#]').addClass('attr-edit');return false;"><i class="icon-pencil"></i></a>
-		<a title="Edit" href="javascript:;" style="display:none;" id="editFrm#a#close" onclick="jQuery('##editFrm#a#container').slideUp();this.style.display='none';jQuery('##editFrm#a#open').show();$('li[attributeID=#attributeBean.getAttributeID()#]').removeClass('attr-edit');return false;"><i class="icon-ok"></i></a>
-		<a title="Delete" href="index.cfm?muraAction=cExtend.updateAttribute&action=delete&subTypeID=#URLEncodedFormat(rc.subTypeID)#&extendSetID=#attributeBean.getExtendSetID()#&siteid=#URLEncodedFormat(rc.siteid)#&attributeID=#attributeBean.getAttributeID()#" onClick="return confirmDialog('Delete the attribute #jsStringFormat("'#attributeBean.getname()#'")#?',this.href)"><i class="icon-remove-sign"></i></a>
+      		<a title="Edit" href="javascript:;" id="editFrm#a#open" onclick="jQuery('##editFrm#a#container').slideDown();this.style.display='none';jQuery('##editFrm#a#close').show();;$('li[attributeID=#attributeBean.getAttributeID()#]').addClass('attr-edit');return false;"><i class="mi-pencil"></i></a>
+      		<a title="Edit" href="javascript:;" style="display:none;" id="editFrm#a#close" onclick="jQuery('##editFrm#a#container').slideUp();this.style.display='none';jQuery('##editFrm#a#open').show();$('li[attributeID=#attributeBean.getAttributeID()#]').removeClass('attr-edit');return false;"><i class="mi-check"></i></a>
+      		<a title="Delete" href="./?muraAction=cExtend.updateAttribute&action=delete&subTypeID=#esapiEncode('url',rc.subTypeID)#&extendSetID=#attributeBean.getExtendSetID()#&siteid=#esapiEncode('url',rc.siteid)#&attributeID=#attributeBean.getAttributeID()##rc.$.renderCSRFTokens(context=attributeBean.getAttributeID(),format='url')#" onClick="return confirmDialog('Delete the attribute #esapiEncode("javascript","'#attributeBean.getname()#'")#?',this.href)"><i class="mi-trash"></i></a>
 		</div>
 	<div style="display:none;" id="editFrm#a#container">
-		<cf_dsp_attribute_form attributeBean="#attributeBean#" action="edit" subTypeID="#rc.subTypeID#" formName="editFrm#a#">
+		<cf_dsp_attribute_form attributeBean="#attributeBean#" action="edit" subTypeID="#rc.subTypeID#" formName="editFrm#a#" muraScope="#rc.$#">
 	</div>
 	</li>
-</cfoutput>
-</cfloop>
-</ul>
+      </cfoutput>
+      </cfloop>
+      </ul>
 
-<cfelse>
-<p class="alert">This set has no attributes.</p>
-</cfif>
+      <cfelse>
+      <div class="help-block-empty">This set has no attributes.</div>
+      </cfif>
+      </div> <!-- /.block-content -->
+    </div> <!-- /.block-bordered -->
+  </div> <!-- /.block-constrain -->
 </cfoutput>

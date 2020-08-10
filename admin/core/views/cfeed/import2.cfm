@@ -28,13 +28,10 @@ Your custom code
 • May not alter the default display of the Mura CMS logo within Mura CMS and
 • Must not alter any files in the following directories.
 
- /admin/
- /tasks/
- /config/
- /requirements/mura/
- /Application.cfc
- /index.cfm
- /MuraProxy.cfc
+	/admin/
+	/core/
+	/Application.cfc
+	/index.cfm
 
 You may copy and distribute Mura CMS with a plug-in, theme or bundle that meets the above guidelines as a combined work 
 under the terms of GPL for Mura CMS, provided that you include the source code of that other code when and as the GNU GPL 
@@ -46,16 +43,26 @@ version 2 without this exception.  You may, if you choose, apply this exception 
 --->
 <cfinclude template="js.cfm">
 <cfoutput>
-<h1>#application.rbFactory.getKeyValue(session.rb,'collections.remotefeedimport')#</h1>
+<div class="mura-header">
+	<h1>#application.rbFactory.getKeyValue(session.rb,'collections.remotefeedimport')#</h1>
+	<cfinclude template="dsp_secondary_menu.cfm">
+	</div> <!-- /.mura-header -->
 
-<cfinclude template="dsp_secondary_menu.cfm">
+	<div class="block block-constrain">
+			<div class="block block-bordered">
+				<div class="block-content">
 
-<cfif not rc.theImport.success>
-<h2>#application.rbFactory.getKeyValue(session.rb,'collections.importfailed')#</h2>
-<p>#application.rbFactory.getKeyValue(session.rb,'collections.importfailedtext')#</p>
-<cfelse>
-<h2>#application.rbFactory.getKeyValue(session.rb,'collections.importsuccessful')#</h2>
-<cfset crumbdata=application.contentManager.getCrumbList(rc.theImport.parentBean.getcontentID(), rc.siteid)/>
-#application.contentRenderer.dspZoom(crumbdata)#
-</cfif>
+						<cfif not rc.theImport.success>
+						<h2>#application.rbFactory.getKeyValue(session.rb,'collections.importfailed')#</h2>
+						<p>#application.rbFactory.getKeyValue(session.rb,'collections.importfailedtext')#</p>
+						<cfelse>
+						<h2>#application.rbFactory.getKeyValue(session.rb,'collections.importsuccessful')#</h2>
+						<cfset crumbdata=application.contentManager.getCrumbList(rc.theImport.parentBean.getcontentID(), rc.siteid)/>
+						#$.dspZoom(crumbdata)#
+						</cfif>
+
+				<div class="clearfix"></div>
+			</div> <!-- /.block-content -->
+		</div> <!-- /.block-bordered -->
+	</div> <!-- /.block-constrain -->
 </cfoutput>

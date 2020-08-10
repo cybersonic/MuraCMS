@@ -28,13 +28,10 @@ Your custom code
 • May not alter the default display of the Mura CMS logo within Mura CMS and
 • Must not alter any files in the following directories.
 
- /admin/
- /tasks/
- /config/
- /requirements/mura/
- /Application.cfc
- /index.cfm
- /MuraProxy.cfc
+	/admin/
+	/core/
+	/Application.cfc
+	/index.cfm
 
 You may copy and distribute Mura CMS with a plug-in, theme or bundle that meets the above guidelines as a combined work 
 under the terms of GPL for Mura CMS, provided that you include the source code of that other code when and as the GNU GPL 
@@ -60,7 +57,7 @@ version 2 without this exception.  You may, if you choose, apply this exception 
 			<ul class="ui-tabs-nav">
 				<li class="ui-state-default ui-corner-top"><a href="##mura-tb-form-tab-basic"><span>Basic</span></a></li>
 				<li class="ui-state-default ui-corner-top"><a href="##mura-tb-form-tab-advanced"><span>Advanced</span></a></li>
-				<!--<li class="ui-state-default ui-corner-top"><a href="##mura-tb-form-tab-validation"><span>Validation</span></a></li>-->
+				<li class="ui-state-default ui-corner-top"><a href="##mura-tb-form-tab-validation"><span>Validation</span></a></li>
 			</ul>
 			
 			<div class="ui-tabs-panel" id="mura-tb-form-tab-basic">
@@ -73,6 +70,7 @@ version 2 without this exception.  You may, if you choose, apply this exception 
 							<label for="name">#mmRBF.getKeyValue(session.rb,'formbuilder.field.name')#</label>
 							<input id="tb-name" class="text long disabled" name="name" type="text" value="" maxlength="50" disabled="true" />
 						</li>
+						#application.serviceFactory.getBean('$').init(session.siteid).renderEvent('onFormElementBasicTabRender')#
 					</ul>
 				</div>
 				
@@ -91,40 +89,29 @@ version 2 without this exception.  You may, if you choose, apply this exception 
 							<input class="text long" type="text" name="cssclass" value="" maxlength="50" data-required='false' />
 						</li>
 						<li>
+							<label for="wrappercssclass">#mmRBF.getKeyValue(session.rb,'formbuilder.field.wrappercssclass')#</label>
+							<input class="text " type="text" name="wrappercssclass" value="" maxlength="50" data-required='false' />
+						</li>
+						<li>
 							<label for="tooltip">#mmRBF.getKeyValue(session.rb,'formbuilder.field.tooltip')#</label>
 							<textarea name="tooltip" value="" maxlength="250" ></textarea>
 						</li>
 					</ul>
 				</div> <!--- End Tab Panel --->
-				<!--
 				<div class="ui-tabs-panel" id="mura-tb-form-tab-validation">
-					<ul class="template-form">
-						<li>
-							<label for="validatetype">#mmRBF.getKeyValue(session.rb,'formbuilder.field.validatetype')#</label>
-							<select class="select" name="validatetype">
-								<option value="">#mmRBF.getKeyValue(session.rb,'formbuilder.field.validate.none')#</option>
-								<option value="numeric">#mmRBF.getKeyValue(session.rb,'formbuilder.field.validate.numeric')#</option>
-								<option value="date">#mmRBF.getKeyValue(session.rb,'formbuilder.field.validate.date')#</option>
-								<option value="email">#mmRBF.getKeyValue(session.rb,'formbuilder.field.validate.email')#</option>
-								<option value="regex">#mmRBF.getKeyValue(session.rb,'formbuilder.field.validate.regex')#</option>
-							</select>
-						</li>
-						<li>
-							<label for="validateregex">#mmRBF.getKeyValue(session.rb,'formbuilder.field.validateregex')#</label>
-							<input class="text long" type="text" name="validateregex" value="" maxlength="250" />
-						</li>
-						<li>
-							<label for="validatemessage">#mmRBF.getKeyValue(session.rb,'formbuilder.field.validatemessage')#</label>
-							<input class="text long" type="text" name="validatemessage" value="" maxlength="250" />
-						</li>
-						<li class="checkbox">
-							<label for="isrequired">
-							<input type="checkbox" type="text" name="isrequired" value="1">
-							#mmRBF.getKeyValue(session.rb,'formbuilder.field.isrequired')#</label>
-						</li>
-					</ul>
+				<ul class="template-form">
+					<li>
+						<label for="validatemessage">#mmRBF.getKeyValue(session.rb,'formbuilder.field.validatemessage')#</label>
+						<input class="text long" type="text" name="validatemessage" value="" maxlength="250" />
+					</li>
+					<li class="checkbox">
+						<label for="isrequired">
+						#mmRBF.getKeyValue(session.rb,'formbuilder.field.isrequired')#</label>
+						<input type="checkbox" type="text" name="isrequired" value="1">
+					</li>
+				</ul>
 				</div>
-				--> <!--- End Tab Panel --->
+				<!--- End Tab Panel --->
 				
 			</div> <!--- End ui-tabs --->
 		</div> <!--- End mura-tb-form --->

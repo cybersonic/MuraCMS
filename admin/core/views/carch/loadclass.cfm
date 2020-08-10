@@ -28,13 +28,10 @@ Your custom code
 • May not alter the default display of the Mura CMS logo within Mura CMS and
 • Must not alter any files in the following directories.
 
- /admin/
- /tasks/
- /config/
- /requirements/mura/
- /Application.cfc
- /index.cfm
- /MuraProxy.cfc
+	/admin/
+	/core/
+	/Application.cfc
+	/index.cfm
 
 You may copy and distribute Mura CMS with a plug-in, theme or bundle that meets the above guidelines as a combined work 
 under the terms of GPL for Mura CMS, provided that you include the source code of that other code when and as the GNU GPL 
@@ -44,53 +41,64 @@ For clarity, if you create a modified version of Mura CMS, you are not obligated
 modified version; it is your choice whether to do so, or to make such modified version available under the GNU General Public License 
 version 2 without this exception.  You may, if you choose, apply this exception to your own modified versions of Mura CMS.
 --->
-<cfset request.layout=false>
-<cfparam name="rc.contentid" default="">
-<cfparam name="rc.parentid" default="">
-<cfparam name="rc.contenthistid" default="">
+<cfsilent>
+	<cfset request.layout=false>
+	<cfparam name="rc.layoutmanager" default="false">
+	<cfparam name="rc.contentid" default="">
+	<cfparam name="rc.parentid" default="">
+	<cfparam name="rc.contenthistid" default="">
+	<cfparam name="rc.objectid" default=""/>
+	<cfset contentRendererUtility=rc.$.getBean('contentRendererUtility')>
+</cfsilent>
+
 <cfswitch expression="#rc.classid#">
 	<cfcase value="component">
-		<cfinclude template="objectclass/dsp_components.cfm">
+		<cfinclude template="objectclass/legacy/dsp_components.cfm">
 	</cfcase>
 	<cfcase value="mailingList">
-		<cfinclude template="objectclass/dsp_mailinglists.cfm">
+		<cfinclude template="objectclass/legacy/dsp_mailinglists.cfm">
 	</cfcase>
 	<cfcase value="system">
-		<cfinclude template="objectclass/dsp_system.cfm">
+		<cfinclude template="objectclass/legacy/dsp_system.cfm">
 	</cfcase>
 	<cfcase value="navigation">
-		<cfinclude template="objectclass/dsp_navigation.cfm">
+		<cfinclude template="objectclass/legacy/dsp_navigation.cfm">
 	</cfcase>
 	<cfcase value="form">
-		<cfinclude template="objectclass/dsp_forms.cfm">
+		<cfinclude template="objectclass/legacy/dsp_forms.cfm">
 	</cfcase>
 	<cfcase value="adzone">
-		<cfinclude template="objectclass/dsp_adzones.cfm">
+		<cfinclude template="objectclass/legacy/dsp_adzones.cfm">
 	</cfcase>
 	<cfcase value="Folder">
-		<cfinclude template="objectclass/dsp_Folders.cfm">
+		<cfinclude template="objectclass/legacy/dsp_Folders.cfm">
 	</cfcase>
 	<cfcase value="calendar">
-		<cfinclude template="objectclass/dsp_calendars.cfm">
+		<cfinclude template="objectclass/legacy/dsp_calendars.cfm">
 	</cfcase>
 	<cfcase value="gallery">
-		<cfinclude template="objectclass/dsp_galleries.cfm">
+		<cfinclude template="objectclass/legacy/dsp_galleries.cfm">
 	</cfcase>
 	<cfcase value="localFeed">
-		<cfinclude template="objectclass/dsp_localfeeds.cfm">
+		<cfinclude template="objectclass/legacy/dsp_localfeeds.cfm">
 	</cfcase>
 	<cfcase value="slideshow">
-		<cfinclude template="objectclass/dsp_slideshows.cfm">
+		<cfinclude template="objectclass/legacy/dsp_slideshows.cfm">
 	</cfcase>
 	<cfcase value="remoteFeed">
-		<cfinclude template="objectclass/dsp_remotefeeds.cfm">
+		<cfinclude template="objectclass/legacy/dsp_remotefeeds.cfm">
 	</cfcase>
 	<cfcase value="plugins">
-		<cfinclude template="objectclass/dsp_plugins.cfm">
+		<cfinclude template="objectclass/legacy/dsp_plugins.cfm">
+	</cfcase>
+	<cfcase value="plugin">
+		<cfinclude template="objectclass/legacy/dsp_plugin_configurator.cfm">
 	</cfcase>
 </cfswitch>
 
-<cfif fileExists("#application.configBean.getWebRoot()##application.configBean.getFileDelim()##rc.siteid##application.configBean.getFileDelim()#includes#application.configBean.getFileDelim()#display_objects#application.configBean.getFileDelim()#custom#application.configBean.getFileDelim()#admin#application.configBean.getFileDelim()#dsp_objectClass.cfm")>
-	<cfinclude template="/#application.configBean.getWebRootMap()#/#rc.siteID#/includes/display_objects/custom/admin/dsp_objectClass.cfm">
+<cfif not rc.layoutmanager>
+	<cfif fileExists("#application.configBean.getWebRoot()#/#rc.siteid#/includes/display_objects/custom/admin/dsp_objectClass.cfm")>
+		<cfinclude template="/#application.configBean.getWebRootMap()#/#rc.siteID#/includes/display_objects/custom/admin/dsp_objectClass.cfm">
+	</cfif>
 </cfif>
 

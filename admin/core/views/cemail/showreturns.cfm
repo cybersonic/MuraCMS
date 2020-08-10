@@ -28,13 +28,10 @@ Your custom code
 • May not alter the default display of the Mura CMS logo within Mura CMS and
 • Must not alter any files in the following directories.
 
- /admin/
- /tasks/
- /config/
- /requirements/mura/
- /Application.cfc
- /index.cfm
- /MuraProxy.cfc
+	/admin/
+	/core/
+	/Application.cfc
+	/index.cfm
 
 You may copy and distribute Mura CMS with a plug-in, theme or bundle that meets the above guidelines as a combined work 
 under the terms of GPL for Mura CMS, provided that you include the source code of that other code when and as the GNU GPL 
@@ -54,7 +51,7 @@ version 2 without this exception.  You may, if you choose, apply this exception 
 <cfif rc.rsReturnsByUser.recordcount>
 	<ul class="metadata">
 	<cfoutput query="rc.rsReturnsByUser">
-	<li>#rc.rsReturnsByUser.email#</li>
+	<li>#esapiEncode('html',rc.rsReturnsByUser.email)#</li>
 	</cfoutput>
 	</ul>
 </cfif>
@@ -62,7 +59,7 @@ version 2 without this exception.  You may, if you choose, apply this exception 
 <cfif rc.rsReturns.recordcount>
 	<ul class="metadata">
 	<cfoutput query="rc.rsReturns">
-	<li>#rc.rsReturns.url# - #rc.rsReturns.returnCount#</li>
+	<li>#esapiEncode('html',rc.rsReturns.url)# - #esapiEncode('html',rc.rsReturns.returnCount)#</li>
 	</cfoutput>
 	</ul>
 </cfif>

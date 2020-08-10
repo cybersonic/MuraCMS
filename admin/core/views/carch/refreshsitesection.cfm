@@ -28,13 +28,10 @@ Your custom code
 • May not alter the default display of the Mura CMS logo within Mura CMS and
 • Must not alter any files in the following directories.
 
- /admin/
- /tasks/
- /config/
- /requirements/mura/
- /Application.cfc
- /index.cfm
- /MuraProxy.cfc
+	/admin/
+	/core/
+	/Application.cfc
+	/index.cfm
 
 You may copy and distribute Mura CMS with a plug-in, theme or bundle that meets the above guidelines as a combined work 
 under the terms of GPL for Mura CMS, provided that you include the source code of that other code when and as the GNU GPL 
@@ -62,7 +59,10 @@ version 2 without this exception.  You may, if you choose, apply this exception 
 	<cfset rc.sortdirection=rc.rstop.sortdirection>
 </cfif>
 
-<cfset variables.pluginEvent=createObject("component","mura.event").init(event.getAllValues())/>	
+<cfset variables.pluginEvent=createObject("component","mura.event").init(event.getAllValues())/>
+<cfset request.tabAssignments=$.getBean("user").loadBy(userID=session.mura.userID, siteID=session.mura.siteID).getContentTabAssignments()>
+<cfset request.hasPublishingTab=not len(request.tabAssignments) or listFindNocase(request.tabAssignments,'Publishing')>
+<cfset request.hasLayoutObjectsTab=not len(request.tabAssignments) or listFindNocase(request.tabAssignments,'Layout & Objects')>	
 <cfset request.rowNum=0>
 <cfset request.menulist=rc.contentID>
 <cfset crumbdata=application.contentManager.getCrumbList(rc.contentID,rc.siteid)>
@@ -71,7 +71,7 @@ version 2 without this exception.  You may, if you choose, apply this exception 
 <cfset rsNext=application.contentManager.getNest(rc.contentID,rc.siteid,rc.sortBy,rc.sortDirection)>
 
 <cfsavecontent variable="data.html">
-<cf_dsp_nest topid="#rc.contentID#" parentid="#rc.contentID#"  rsnest="#rsNext#" locking="#application.settingsManager.getSite(rc.siteid).getlocking()#" nestlevel="1" perm="#perm#" siteid="#rc.siteid#" moduleid="#rc.moduleid#" restricted="#r#" viewdepth="1" nextn="#session.mura.nextN#" startrow="#rc.startrow#" sortBy="#rc.sortBy#" sortDirection="#rc.sortDirection#" pluginEvent="#pluginEvent#" isSectionRequest="true">
+<cf_dsp_nest topid="#rc.contentID#" parentid="#rc.contentID#"  rsnest="#rsNext#" locking="#application.settingsManager.getSite(rc.siteid).getlocking()#" nestlevel="1" perm="#perm#" siteid="#rc.siteid#" moduleid="#rc.moduleid#" restricted="#r#" viewdepth="1" nextn="#session.mura.nextN#" startrow="#rc.startrow#" sortBy="#rc.sortBy#" sortDirection="#rc.sortDirection#" pluginEvent="#pluginEvent#" muraScope="#rc.$#" isSectionRequest="true">
 </cfsavecontent>
 
 <cfoutput>#createObject("component","mura.json").encode(data)#</cfoutput>

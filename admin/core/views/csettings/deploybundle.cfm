@@ -28,9 +28,9 @@ and (c) must not alter any files in the following directories except in cases wh
 a separately distributed license.
 
 /admin/
-/tasks/
-/config/
-/requirements/mura/
+	/core/
+	/Application.cfc
+	/index.cfm
 
 You may copy and distribute such a combined work under the terms of GPL for Mura CMS, provided that you include
 the source code of that other code when and as the GNU GPL requires distribution of source code.
@@ -40,18 +40,18 @@ for your modified version; it is your choice whether to do so, or to make such m
 the GNU General Public License version 2 without this exception. You may, if you choose, apply this exception
 to your own modified versions of Mura CMS.
 --->
+<cfoutput>
 <script>
 	/*jQuery(document).ready(function(){
 		jQuery.ajax({
-			url: '/tasks/bundle/feedback.cfm?siteID=<cfoutput>#rc.siteID#</cfoutput>',
+			url: '#application.configBean.getContext()##application.configBean.getAdminDir()#/core/utilities/bundle/feedback.cfm?siteID=<cfoutput>#rc.siteID#</cfoutput>',
 			success: function(data) {
 				jQuery('#feedbackLoop').html(data);
 			}
 		});
 	});*/
 </script>
-
 <h1>Deploy Bundle</h1>
-<iframe frameborder="0" src="/tasks/bundle/feedback.cfm?siteID=<cfoutput>#rc.siteID#</cfoutput>"></iframe>
-
+<iframe frameborder="0" src="#application.configBean.getContext()##application.configBean.getAdminDir()#/core/utilities/bundle/feedback.cfm?siteID=<cfoutput>#esapiEncode('url',rc.siteID)#</cfoutput>"></iframe>
+</cfoutput>
 <!---<cfoutput>#application.pluginManager.announceEvent("onAfterSiteDeployRender",event)#</cfoutput>--->

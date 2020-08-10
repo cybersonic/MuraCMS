@@ -28,13 +28,10 @@ Your custom code
 • May not alter the default display of the Mura CMS logo within Mura CMS and
 • Must not alter any files in the following directories.
 
- /admin/
- /tasks/
- /config/
- /requirements/mura/
- /Application.cfc
- /index.cfm
- /MuraProxy.cfc
+	/admin/
+	/core/
+	/Application.cfc
+	/index.cfm
 
 You may copy and distribute Mura CMS with a plug-in, theme or bundle that meets the above guidelines as a combined work 
 under the terms of GPL for Mura CMS, provided that you include the source code of that other code when and as the GNU GPL 
@@ -48,21 +45,19 @@ version 2 without this exception.  You may, if you choose, apply this exception 
 <cfset rc.perm=application.permUtility.getnodePerm(rc.crumbdata)/>
 <cfset rc.rsNotify=application.contentUtility.getNotify(rc.crumbdata) />
 <cfoutput>
-<div class="span6">
+<div class="mura-control-group">
 <label>#application.rbFactory.getKeyValue(session.rb,'sitemanager.content.fields.sendto')#</label>
-	<div class="controls">
-		<select id="notifyEditor" name="notify" multiple="multiple" class="span12" <cfif rc.perm eq 'editor'> onChange="javascript: this.selectedIndex==0?document.form1.approved.checked=true:document.form1.approved.checked=false;"</cfif>>
-		<option value="" selected>None</option>
-		<cfloop query="rc.rsnotify">
-		<option value="#rc.rsnotify.userID#">#rc.rsnotify.lname#, #rc.rsnotify.fname# (#application.rbFactory.getKeyValue(session.rb,'sitemanager.permissions.#rc.rsnotify.type#')#)</option>
-		</cfloop>
-		</select>
-	</div>
+	<select id="notifyEditor" name="notify" multiple="multiple" <cfif rc.perm eq 'editor'> onChange="javascript: this.selectedIndex==0?document.contentForm.approved.checked=true:document.contentForm.approved.checked=false;"</cfif>>
+	<option value="" selected>None</option>
+	<cfloop query="rc.rsnotify">
+	<option value="#rc.rsnotify.userID#">#rc.rsnotify.lname#, #rc.rsnotify.fname# (#application.rbFactory.getKeyValue(session.rb,'sitemanager.permissions.#rc.rsnotify.type#')#)</option>
+	</cfloop>
+	</select>
 </div>
-<div class="span6">
+<div class="mura-control-group">
 	<label>#application.rbFactory.getKeyValue(session.rb,'sitemanager.content.fields.message')#</label>
-	<textarea name="message" rows="6" id="messageEditor" class="span12">#application.rbFactory.getKeyValue(session.rb,'sitemanager.content.fields.messagetext')#
-</textarea>
+	<textarea name="message" rows="6" id="messageEditor">#application.rbFactory.getKeyValue(session.rb,'sitemanager.content.fields.messagetext')#
+	</textarea>
 </div>
 </cfoutput>
 

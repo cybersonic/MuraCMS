@@ -28,13 +28,10 @@ Your custom code
 • May not alter the default display of the Mura CMS logo within Mura CMS and
 • Must not alter any files in the following directories.
 
- /admin/
- /tasks/
- /config/
- /requirements/mura/
- /Application.cfc
- /index.cfm
- /MuraProxy.cfc
+	/admin/
+	/core/
+	/Application.cfc
+	/index.cfm
 
 You may copy and distribute Mura CMS with a plug-in, theme or bundle that meets the above guidelines as a combined work 
 under the terms of GPL for Mura CMS, provided that you include the source code of that other code when and as the GNU GPL 
@@ -44,53 +41,66 @@ For clarity, if you create a modified version of Mura CMS, you are not obligated
 modified version; it is your choice whether to do so, or to make such modified version available under the GNU General Public License 
 version 2 without this exception.  You may, if you choose, apply this exception to your own modified versions of Mura CMS.
 --->
-<cfoutput><h1>#application.rbFactory.getKeyValue(session.rb,"dashboard.session.sessionhistory")#</h1>
+<cfoutput>
 
-<cfinclude template="dsp_secondary_menu.cfm">
+<div class="mura-header">
+		<h1>#application.rbFactory.getKeyValue(session.rb,"dashboard.session.sessionhistory")#</h1>
+		<cfinclude template="dsp_secondary_menu.cfm">
+</div> <!-- /.mura-header -->
 
-<cfsilent>
-<cfset lastAccessed=application.dashboardManager.getLastSessionDate(rc.rslist.urlToken,rc.rslist.originalUrlToken,rc.rslist.entered) />
-</cfsilent>
+<div class="block block-constrain">
+	<div class="block block-bordered">
+	  <div class="block-content">
 
-<ul class="metadata">
-<li><strong>#application.rbFactory.getKeyValue(session.rb,"dashboard.session.user")#:</strong> #HTMLEditFormat(application.dashboardManager.getUserFromSessionQuery(rc.rslist))#</li>
-<li><strong>#application.rbFactory.getKeyValue(session.rb,"dashboard.session.lastaccessed")#:</strong> <cfif LSisDate(lastAccessed)>#LSDateFormat(lastAccessed,session.dateKeyFormat)#<cfelse>Not Available</cfif></li>
-<cfif LSisDate(lastAccessed)><li><strong>#application.rbFactory.getKeyValue(session.rb,"dashboard.session.timebetweenvisit")#:</strong> #application.dashboardManager.getTimespan(lastAccessed,rc.rslist.entered,"long")#</li></cfif> 
-<li><strong>#application.rbFactory.getKeyValue(session.rb,"dashboard.session.lengthofvisit")#:</strong> #application.dashboardManager.getTimespan(rc.rslist.entered[rc.rslist.recordcount],rc.rslist.entered[1])#</li>
-<li><strong>#application.rbFactory.getKeyValue(session.rb,"dashboard.session.useragent")#:</strong> #HTMLEditFormat(application.dashboardManager.getUserAgentFromSessionQuery(rc.rslist))#</li>
-</ul>
+			<cfsilent>
+			<cfset lastAccessed=application.dashboardManager.getLastSessionDate(rc.rslist.urlToken,rc.rslist.originalUrlToken,rc.rslist.entered) />
+			</cfsilent>
 
-<table class="table table-striped table-condensed table-bordered mura-table-grid"> 
-<tr>
-<th>#application.rbFactory.getKeyValue(session.rb,"dashboard.session.user")#</th>
-<th class="var-width">#application.rbFactory.getKeyValue(session.rb,"dashboard.session.content")#</th>
-<th>#application.rbFactory.getKeyValue(session.rb,"dashboard.session.requesttime")#</th>
-<th>#application.rbFactory.getKeyValue(session.rb,"dashboard.session.keywords")#</th>
-<th>#application.rbFactory.getKeyValue(session.rb,"dashboard.session.locale")#</th>
-<th>&nbsp;</th>
-</tr>
-<cfloop query="rc.rslist">
-<cfset crumbdata=application.contentManager.getCrumbList(rc.rslist.contentid, rc.siteid)/>
-<tr>
-<td><cfif rc.rslist.userid eq ''>Anonymous<cfelse>#HTMLEditFormat(rc.rslist.fname)# #HTMLEditFormat(rc.rslist.lname)#<cfif rc.rslist.company neq ''> (#HTMLEditFormat(rc.rslist.company)#)</cfif></cfif></td>
-<td class="var-width">#application.contentRenderer.dspZoom(crumbdata)#</td>
+			<ul class="metadata">
+			<li><strong>#application.rbFactory.getKeyValue(session.rb,"dashboard.session.user")#:</strong> #esapiEncode('html',application.dashboardManager.getUserFromSessionQuery(rc.rslist))#</li>
+			<li><strong>#application.rbFactory.getKeyValue(session.rb,"dashboard.session.lastaccessed")#:</strong> <cfif LSisDate(lastAccessed)>#LSDateFormat(lastAccessed,session.dateKeyFormat)#<cfelse>Not Available</cfif></li>
+			<cfif LSisDate(lastAccessed)><li><strong>#application.rbFactory.getKeyValue(session.rb,"dashboard.session.timebetweenvisit")#:</strong> #application.dashboardManager.getTimespan(lastAccessed,rc.rslist.entered,"long")#</li></cfif> 
+			<li><strong>#application.rbFactory.getKeyValue(session.rb,"dashboard.session.lengthofvisit")#:</strong> #application.dashboardManager.getTimespan(rc.rslist.entered[rc.rslist.recordcount],rc.rslist.entered[1])#</li>
+			<li><strong>#application.rbFactory.getKeyValue(session.rb,"dashboard.session.useragent")#:</strong> #esapiEncode('html',application.dashboardManager.getUserAgentFromSessionQuery(rc.rslist))#
+			</li>
+			<cfset $.event('originalUrlToken',rc.rslist.originalUrlToken)>
+			#$.renderEvent('onSessionMetaDataRender')#
+			</ul>
 
-<td>#LSDateFormat(rc.rslist.entered,session.dateKeyFormat)# #LSTimeFormat(rc.rslist.entered,"short")#</td>
-<td><cfif rc.rslist.keywords neq ''>#HTMLEditFormat(rc.rslist.keywords)#<cfelse>&mdash;</cfif></td>
-<td>#HTMLEditFormat(rc.rslist.locale)#</td>
-<td class="actions"><ul><li class="preview"><cfswitch expression="#rc.rslist.type#">
-		<cfcase value="Page,Folder,Calendar,Gallery">
-		<a title="#application.rbFactory.getKeyValue(session.rb,"dashboard.session.view")#" href="##" onclick="return preview('http://#application.settingsManager.getSite(rc.siteid).getDomain()##application.configBean.getServerPort()##application.configBean.getContext()##application.contentRenderer.getURLStem(rc.siteid,rc.rsList.filename)#','#rc.rslist.targetParams#');"><i class="icon-globe"></i></a>
-		</cfcase>
-		<cfcase value="Link">
-		<a title="#application.rbFactory.getKeyValue(session.rb,"dashboard.session.view")#" href="##" onclick="return preview('#rc.rslist.filename#','#rc.rslist.targetParams#');"><i class="icon-globe"></i></a>
-		</cfcase>
-		<cfcase value="File">
-		<a title="#application.rbFactory.getKeyValue(session.rb,"dashboard.session.view")#" href="##" onclick="return preview('http://#application.settingsManager.getSite(rc.siteid).getDomain()##application.configBean.getServerPort()##application.configBean.getContext()##application.contentRenderer.getURLStem(rc.siteid,"")#?LinkServID=#rc.rslist.contentid#','#rc.rslist.targetParams#');"><i class="icon-globe"></i></a>
-		</cfcase>
-		</cfswitch></li></ul></td>
-</tr></cfloop>
+			<table class="mura-table-grid"> 
+			<tr>
+				<th class="actions"></th>
+				<th>#application.rbFactory.getKeyValue(session.rb,"dashboard.session.user")#</th>
+				<th class="var-width">#application.rbFactory.getKeyValue(session.rb,"dashboard.session.content")#</th>
+				<th>#application.rbFactory.getKeyValue(session.rb,"dashboard.session.requesttime")#</th>
+				<th>#application.rbFactory.getKeyValue(session.rb,"dashboard.session.keywords")#</th>
+				<th>#application.rbFactory.getKeyValue(session.rb,"dashboard.session.locale")#</th>
+			</tr>
+			<cfloop query="rc.rslist">
+			<cfset crumbdata=application.contentManager.getCrumbList(rc.rslist.contentid, rc.siteid)/>
+			<tr>
+				<td class="actions">
+					<a class="show-actions" href="javascript:;" <!---ontouchstart="this.onclick();"---> onclick="showTableControls(this);"><i class="mi-ellipsis-v"></i></a>
+					<div class="actions-menu hide">	
+						<ul class="actions-list">
+							<li class="preview">
+								<a href="##" onclick="return preview('#application.settingsManager.getSite(rc.siteid).getWebPath(complete=1)##$.getURLStem(rc.siteid,rc.rsList.filename)#');"><i class="mi-globe"></i>#application.rbFactory.getKeyValue(session.rb,"dashboard.session.view")#</a>
+							</li>
+						</ul>
+					</div>	
+				</td>
+				<td><cfif rc.rslist.fname eq ''>Anonymous<cfelse>#esapiEncode('html',rc.rslist.fname)# #esapiEncode('html',rc.rslist.lname)#<cfif rc.rslist.company neq ''> (#esapiEncode('html',rc.rslist.company)#)</cfif></cfif></td>
+				<td class="var-width">#$.dspZoom(crumbdata)#</td>
 
-</table>
+				<td>#LSDateFormat(rc.rslist.entered,session.dateKeyFormat)# #LSTimeFormat(rc.rslist.entered,"short")#</td>
+				<td><cfif rc.rslist.keywords neq ''>#esapiEncode('html',rc.rslist.keywords)#<cfelse>&mdash;</cfif></td>
+				<td>#esapiEncode('html',rc.rslist.locale)#</td>
+			</tr></cfloop>
+
+			</table>
+
+		</div> <!-- /.block-content -->
+	</div> <!-- /.block-bordered -->
+</div> <!-- /.block-constrain -->
 </cfoutput>
 
